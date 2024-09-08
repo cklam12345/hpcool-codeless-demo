@@ -1,0 +1,772 @@
+[
+    {
+        "id": "5b7b2417d66d2fbb",
+        "type": "tab",
+        "label": "xiao",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c11c5b3ea4a59c0b",
+        "type": "ui_button",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "group": "d795e213581a5e06",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "button",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 770,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "90e8f4d49463a350",
+        "type": "ollama-chat",
+        "z": "5b7b2417d66d2fbb",
+        "name": "Ollama Chat",
+        "x": 370,
+        "y": 620,
+        "wires": [
+            [
+                "e7ac6c0c24a72f71",
+                "bbfaf3102b39c3a4"
+            ]
+        ]
+    },
+    {
+        "id": "e7ac6c0c24a72f71",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 63",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "bbfaf3102b39c3a4",
+        "type": "change",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.message.content",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 700,
+        "y": 620,
+        "wires": [
+            [
+                "0c528e893c93fbe9",
+                "e5c06a2515200630"
+            ]
+        ]
+    },
+    {
+        "id": "0c528e893c93fbe9",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 64",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 920,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "426d021a3762f146",
+        "type": "venv",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "code": "import pyaudio\nimport wave\n\ndef record_audio(filename=\"recorded_audio.wav\", duration=3):\n    chunk = 1024  # Number of bytes per chunk\n    sample_format = pyaudio.paInt16  # 16-bit audio\n    channels = 1  # Mono\n    rate = 44100  # Sampling rate\n\n    p = pyaudio.PyAudio()  # Initialize the interface\n\n    # Open the stream and start recording immediately\n    stream = p.open(format=sample_format,\n                    channels=channels,\n                    rate=rate,\n                    frames_per_buffer=chunk,\n                    input=True)\n\n    frames = []  # List to store audio data\n\n    # Record for the specified duration\n    for _ in range(0, int(rate / chunk * duration)):\n        data = stream.read(chunk)\n        frames.append(data)\n\n    # Stop and close the stream\n    stream.stop_stream()\n    stream.close()\n    p.terminate()\n\n    # Save the recorded data to a file\n    with wave.open(filename, 'wb') as wf:\n        wf.setnchannels(channels)\n        wf.setsampwidth(p.get_sample_size(sample_format))\n        wf.setframerate(rate)\n        wf.writeframes(b''.join(frames))\n\n# Immediately start recording and save the audio\nrecord_audio()\n",
+        "continuous": false,
+        "x": 490,
+        "y": 280,
+        "wires": [
+            [
+                "9624e4572541a91c"
+            ]
+        ]
+    },
+    {
+        "id": "7b4c42b178603253",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 340,
+        "y": 280,
+        "wires": [
+            [
+                "426d021a3762f146"
+            ]
+        ]
+    },
+    {
+        "id": "a8c32402f13f0724",
+        "type": "pip",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "arg": "pyinotify",
+        "action": "list",
+        "tail": false,
+        "x": 410,
+        "y": 80,
+        "wires": [
+            [
+                "bcd377496bd62266",
+                "bb753ef73b34bf57"
+            ]
+        ]
+    },
+    {
+        "id": "1a4a24308399d4f9",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 80,
+        "wires": [
+            [
+                "a8c32402f13f0724"
+            ]
+        ]
+    },
+    {
+        "id": "6db4c6573d2abe81",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 71",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "9208f3a0304d90e5",
+        "type": "template",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"model\": \"gemma2:2b-instruct-fp16\",\n    \"messages\": [\n        {\n            \"role\": \"user\",\n            \"content\": \"{{payload}}\"\n        }\n    ]\n}",
+        "output": "json",
+        "x": 700,
+        "y": 480,
+        "wires": [
+            [
+                "90e8f4d49463a350"
+            ]
+        ]
+    },
+    {
+        "id": "04f7c3e871bf4209",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Move forward!",
+        "payloadType": "str",
+        "x": 350,
+        "y": 440,
+        "wires": [
+            [
+                "fe5db020697da1bc"
+            ]
+        ]
+    },
+    {
+        "id": "fe5db020697da1bc",
+        "type": "template",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "You are a robot operator.\nSince we are converting speech to text to send short commands, there may be homophones mixed in.\nPlease use hiragana instead of kanji.\n\nIf the context is to move forward, return G.\nIf the context is to move backwards, return B.\nIf the context is to stop, return S.\nPlease return S even in the context of terminating.\nIf the context is rotation to the right, return R.\nIf the context is rotation to the left, return L.\nReturn N in all other contexts.\n\nIf there is a meaning to stop or terminate, please give priority to returning only S.\nInstruction: {{payload}}",
+        "output": "str",
+        "x": 540,
+        "y": 480,
+        "wires": [
+            [
+                "9208f3a0304d90e5"
+            ]
+        ]
+    },
+    {
+        "id": "4929b442771d9bd3",
+        "type": "mqtt out",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "topic": "servo/control",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "f414466379b9f58d",
+        "x": 550,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "1cc1a4d6f98f8b95",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "G",
+        "payloadType": "str",
+        "x": 370,
+        "y": 800,
+        "wires": [
+            [
+                "4929b442771d9bd3"
+            ]
+        ]
+    },
+    {
+        "id": "842b15fa75b3cbee",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "S",
+        "payloadType": "str",
+        "x": 370,
+        "y": 840,
+        "wires": [
+            [
+                "4929b442771d9bd3"
+            ]
+        ]
+    },
+    {
+        "id": "da214776fa4ba1f4",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "Retreat!",
+        "payloadType": "str",
+        "x": 330,
+        "y": 480,
+        "wires": [
+            [
+                "fe5db020697da1bc"
+            ]
+        ]
+    },
+    {
+        "id": "eab8b0caade795fe",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "stop it",
+        "payloadType": "str",
+        "x": 330,
+        "y": 520,
+        "wires": [
+            [
+                "fe5db020697da1bc"
+            ]
+        ]
+    },
+    {
+        "id": "9624e4572541a91c",
+        "type": "venv",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "code": "from faster_whisper import WhisperModel\n\nmodel_size = \"tiny\"\n\n# Run on GPU with FP16\n# model = WhisperModel(model_size, device=\"cpu\", compute_type=\"float16\")\n# or run on GPU with INT8\n# model = WhisperModel(model_size, device=\"cuda\", compute_type=\"int8_float16\")\n\n# or run on CPU with INT8\nmodel = WhisperModel(model_size, device=\"cpu\", compute_type=\"int8\")\n\nsegments, info = model.transcribe(\"recorded_audio.wav\", beam_size=5, language=\"ja\")\n\n# print(\"Detected language '%s' with probability %f\" % (info.language, info.language_probability))\n\nfor segment in segments:\n    # print(\"[%.2fs -> %.2fs] %s\" % (segment.start, segment.end, segment.text))\n    path = \"faster-whisper.txt\"\n    with open(path, mode='w', encoding='UTF-8') as f:\n        f.write(segment.text)\n    # print(segment.text)",
+        "continuous": false,
+        "x": 710,
+        "y": 280,
+        "wires": [
+            [
+                "8f6e80629720a2e3",
+                "cdc828a977a99f29"
+            ]
+        ]
+    },
+    {
+        "id": "bcd377496bd62266",
+        "type": "pip",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "arg": "faster-whisper",
+        "action": "install",
+        "tail": false,
+        "x": 550,
+        "y": 80,
+        "wires": [
+            [
+                "6db4c6573d2abe81"
+            ]
+        ]
+    },
+    {
+        "id": "bb753ef73b34bf57",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 80",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "8f6e80629720a2e3",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 81",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 860,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "cdc828a977a99f29",
+        "type": "file in",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "filename": "faster-whisper.txt",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 530,
+        "y": 380,
+        "wires": [
+            [
+                "fe5db020697da1bc",
+                "df872dce2ebc6ac4"
+            ]
+        ]
+    },
+    {
+        "id": "df872dce2ebc6ac4",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 82",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "4058856e36873d5a",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 340,
+        "y": 380,
+        "wires": [
+            [
+                "cdc828a977a99f29"
+            ]
+        ]
+    },
+    {
+        "id": "6c096f85b7750d85",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 84",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 540,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "e5c06a2515200630",
+        "type": "function",
+        "z": "5b7b2417d66d2fbb",
+        "name": "function 1",
+        "func": "msg.payload = msg.payload.replace(/\\r?\\n/g,\"\")\nmsg.payload = msg.payload.replace(\" \",\"\")\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 760,
+        "wires": [
+            [
+                "4929b442771d9bd3",
+                "6c096f85b7750d85"
+            ]
+        ]
+    },
+    {
+        "id": "a0a8aad03900ad58",
+        "type": "comment",
+        "z": "5b7b2417d66d2fbb",
+        "name": "record：pyaudio",
+        "info": "",
+        "x": 520,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "9f1eb0d7108010c6",
+        "type": "comment",
+        "z": "5b7b2417d66d2fbb",
+        "name": "transcription：Faster Whisper",
+        "info": "",
+        "x": 780,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "b1b2e9e68627be1b",
+        "type": "comment",
+        "z": "5b7b2417d66d2fbb",
+        "name": "Creating an imperative statement",
+        "info": "",
+        "x": 390,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "372f8e309ea8f287",
+        "type": "comment",
+        "z": "5b7b2417d66d2fbb",
+        "name": "Sending operation commands：Ollama",
+        "info": "",
+        "x": 410,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "56b7b27d48211a8c",
+        "type": "comment",
+        "z": "5b7b2417d66d2fbb",
+        "name": "start",
+        "info": "",
+        "x": 310,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "e7a0807ed59544e5",
+        "type": "inject",
+        "z": "5b7b2417d66d2fbb",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 260,
+        "y": 160,
+        "wires": [
+            [
+                "f785fcb5a6a28342"
+            ]
+        ]
+    },
+    {
+        "id": "f785fcb5a6a28342",
+        "type": "pip",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "arg": "pyaudio",
+        "action": "list",
+        "tail": false,
+        "x": 410,
+        "y": 160,
+        "wires": [
+            [
+                "52813ca07b052f35",
+                "e98336f9f25a5e2b"
+            ]
+        ]
+    },
+    {
+        "id": "52813ca07b052f35",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 85",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "e98336f9f25a5e2b",
+        "type": "pip",
+        "z": "5b7b2417d66d2fbb",
+        "venvconfig": "5bb32f2738f10b5a",
+        "name": "",
+        "arg": "langchain",
+        "action": "install",
+        "tail": false,
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "23cce2aae42716bf"
+            ]
+        ]
+    },
+    {
+        "id": "23cce2aae42716bf",
+        "type": "debug",
+        "z": "5b7b2417d66d2fbb",
+        "name": "debug 86",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "d795e213581a5e06",
+        "type": "ui_group",
+        "name": "Default",
+        "tab": "46d2753a8b4388a4",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5bb32f2738f10b5a",
+        "type": "venv-config",
+        "venvname": "audio",
+        "version": "3.8"
+    },
+    {
+        "id": "f414466379b9f58d",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "46d2753a8b4388a4",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
